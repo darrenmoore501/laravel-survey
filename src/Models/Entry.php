@@ -42,7 +42,7 @@ class Entry extends Model implements EntryContract
      */
     public function __construct(array $attributes = [])
     {
-        if (! isset($this->table)) {
+        if (!isset($this->table)) {
             $this->setTable(config('survey.database.tables.entries'));
         }
 
@@ -121,7 +121,7 @@ class Entry extends Model implements EntryContract
             $answer_class = get_class(app()->make(Answer::class));
 
             if (gettype($value) === 'array') {
-                $value = implode(', ', $value);
+                $value = json_encode(array_filter($value));
             }
 
             $this->answers->add($answer_class::make([
@@ -144,7 +144,13 @@ class Entry extends Model implements EntryContract
     {
         $answer = $this->answers()->where('question_id', $question->id)->first();
 
-        return isset($answer) ? $answer->value : null;
+        $answerFor = isset($answer) ? $answer->value : null;
+
+        if ($answerFor && str_starts_with($question->type, 'multiselect')) {
+            $answerFor = json_decode($answerFor);
+        }
+
+        return $answerFor;
     }
 
     /**
