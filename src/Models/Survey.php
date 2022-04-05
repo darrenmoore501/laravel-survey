@@ -17,7 +17,7 @@ class Survey extends Model implements SurveyContract
      */
     public function __construct(array $attributes = [])
     {
-        if (! isset($this->table)) {
+        if (!isset($this->table)) {
             $this->setTable(config('survey.database.tables.surveys'));
         }
 
@@ -115,7 +115,7 @@ class Survey extends Model implements SurveyContract
      */
     public function lastEntry(Model $participant = null)
     {
-        return $participant === null ? null : $this->entriesFrom($participant)->first();
+        return $participant === null ? null : $this->entriesFrom($participant)->latest()->first();
     }
 
     /**
